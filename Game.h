@@ -15,24 +15,25 @@ public:
 	static float window_height;
 
 	//Game(map<int, string>& level_paths, int start_level);
+	Game() { LoadLevel(); };
 	void HandleWindowReshape();
 	void Update();
 	void Draw();
 	void MouseMove(int mouse_x);
-
+	bool isActive = false;
 private:
 	Ball ball;
-	//vector<Brick> bricks;
+	vector<Brick> bricks;
 	Rocket rocket;
 	//map<int, string> level_paths;
 	int current_level;
 	int balls_left;
 	void HandleCollision();
+	bool isColision(Brick& br);
 
-
-	//void LoadLevel();
+	void LoadLevel();
 	
-	//void NewBall();
+	void NewBall();
 	//void EndGame();
 };
 

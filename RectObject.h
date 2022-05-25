@@ -6,8 +6,9 @@ public:
 	virtual void Draw() = 0;
 	virtual void HandleWindowReshape() = 0;
 	float getWidth() { return width; }
-	float getheight() { return height; }
+	float getHeight() { return height; }
 	Point getPosition() { return position; }
+	void SetPosition(Point position) { this->position = position; }
 protected:
 	float width;
 	float height;

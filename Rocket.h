@@ -10,6 +10,7 @@ public:
 	void Draw() override;
 	void Move(float mouse_pos_x);
 	void HandleWindowReshape() override;
+	void setStartPosition();
 private:
 	
 };

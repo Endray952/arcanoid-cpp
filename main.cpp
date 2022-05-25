@@ -5,8 +5,8 @@
 
 
 #define FPS 60
-float WinWidth = 800.0;
-float WinHeight = 800.0;
+float WinWidth = 600.0;
+float WinHeight = 600.0;
 
 
 float r_x = 50.0, r_y = 290.0, r_w = 80, r_h = 8.0;
@@ -87,6 +87,9 @@ void MouseCallback(int button, int state, int x, int y) {
         switch (button) {
         case GLUT_LEFT_BUTTON:
             //menu.HandleClick();
+            if (game) {
+                game->isActive = !game->isActive;
+            }       
             break;
         default:
             break;

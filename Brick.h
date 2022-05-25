@@ -2,12 +2,16 @@
 #include "RectObject.h"
 #include "Types.h"
 
-class Brick : private RectObject
+class Brick : public RectObject
 {
 public:
-	Brick(Bonus bonus, Rect position, int strength);
-	void Draw() {};
-	void Hit(int& bricks_left);
+	Brick(Point position, int strength, int row, int col);
+	void HandleWindowReshape() {};
+	void Draw() override;
+	void Hit();
+	int col;
+	int row;
+	int GetStrength() { return strength; };
 private:
 	int strength;
 	Bonus bonus;

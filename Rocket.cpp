@@ -4,11 +4,7 @@
 #include "Game.h"
 
 Rocket::Rocket() {
-	float w = Game::window_width;
-	float h = Game::window_height;
-	HandleWindowReshape();
-	Point ini_pos = { w / 2 , h - height / 2 };
-	position = ini_pos;
+	setStartPosition();
 }
 
 void Rocket::HandleWindowReshape() {
@@ -29,4 +25,12 @@ void Rocket::Move(float mouse_pos_x) {
 		position.x = mouse_pos_x ;
 	}
 
+}
+
+void Rocket::setStartPosition() {
+	float w = Game::window_width;
+	float h = Game::window_height;
+	HandleWindowReshape();
+	Point ini_pos = { w / 2 , h - height / 2 };
+	position = ini_pos;
 }

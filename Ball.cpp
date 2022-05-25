@@ -5,8 +5,8 @@
 
 Ball::Ball() {
 	SetStartPosition();
-	speed.x = 4;
-	speed.y = 4;
+	speed.x = 7;
+	speed.y = 7;
 }
 
 
@@ -39,30 +39,4 @@ void Ball::HandleWindowReshape() {
 void Ball::Move() {
 	position.x += speed.x;
 	position.y += speed.y;
-
-	/*float x = position.x;
-	float y = position.y;
-	float dx = speed.x;
-	float dy = speed.y;
-	float r = width / 2;
-	if (x - r <= 0)
-	{
-		x = r;
-		dx *= -1;
-	}
-	else if (y - r <= 0)
-	{
-		y = r;
-		dy *= -1;
-	}
-	else if (x + r >= Game::window_width)
-	{
-		x = Game::window_width - r;
-		dx *= -1;
-	}*/
-	/*else if (y + r >= r_y && y + r <= r_y + r_h && x > r_x && x < r_x + r_w)
-	{
-		y = r_y - r;
-		dy *= -1;
-	}*/
 }
