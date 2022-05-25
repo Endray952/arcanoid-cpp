@@ -3,14 +3,13 @@
 #include "Types.h"
 #include "RectObject.h"
 
-class Rocket : private RectObject
+class Rocket : public RectObject
 {
 public:
 	Rocket();
-	
 	void Draw() override;
 	void Move(float mouse_pos_x);
-	void HandleWindowResize(float width, float height);
+	void HandleWindowReshape() override;
 private:
 	
 };

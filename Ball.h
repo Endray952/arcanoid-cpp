@@ -3,18 +3,21 @@
 #include "RectObject.h"
 #include <vector>
 #include "Brick.h"
+#include "Rocket.h"
 using namespace std;
-class Ball : private RectObject
+class Ball : public RectObject
 {
 public:
-	Ball(float radius, Point speed);
-	void Draw() {};
-	bool Move();
-	void setSpeed(Point speed);
-private:
+	Ball();
+	void Draw() override;
+	void HandleWindowReshape() override;
+	void Move();
+	//void setSpeed(Point speed);
+	void SetStartPosition();
+	//Point getSpeed() { return speed; };
 	Point speed;
-	float radius;
-
-	bool CheckCollision(vector<Brick>& bricks, Rect& rocket_pos);
+private:
+	
+	//bool CheckCollision(vector<Brick>& bricks, Rect& rocket_pos);
 };
 

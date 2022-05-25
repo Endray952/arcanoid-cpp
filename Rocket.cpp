@@ -6,26 +6,27 @@
 Rocket::Rocket() {
 	float w = Game::window_width;
 	float h = Game::window_height;
-	HandleWindowResize(w, h);
-	Point ini_pos = { w / 2 - width / 2, h - height / 2 };
-	pos = ini_pos;
+	HandleWindowReshape();
+	Point ini_pos = { w / 2 , h - height / 2 };
+	position = ini_pos;
 }
 
-void Rocket::HandleWindowResize(float window_width, float window_height) {
-	width = window_width / 10;
-	height = window_height / 20;
+void Rocket::HandleWindowReshape() {
+	width = Game::window_width / 12;
+	height = Game::window_height / 70;
+	position.y = Game::window_height - height / 2;
 }
 
 void Rocket::Draw() {
 	glColor3f(0.2, 0.8, 0.1);
-	glRectf(pos.x - width / 2, pos.y + height / 2, pos.x + width / 2, pos.y - height / 2);
+	glRectf(position.x - width / 2, position.y + height / 2, position.x + width / 2, position.y - height / 2);
 }
 
 void Rocket::Move(float mouse_pos_x) {
 	float left = mouse_pos_x - width / 2;
 	float rigth = mouse_pos_x + width / 2;
 	if (left > 0 && rigth < glutGet(GLUT_WINDOW_WIDTH)) {
-		pos.x = mouse_pos_x ;
+		position.x = mouse_pos_x ;
 	}
 
 }

@@ -25,6 +25,9 @@ void Initialize(void) {
 void ReshapeWindow(int w, int h) {
     Game::window_width = glutGet(GLUT_WINDOW_WIDTH);
     Game::window_height = glutGet(GLUT_WINDOW_HEIGHT);
+    if (game) {
+        game->HandleWindowReshape();
+    }
     glViewport(0, 0, (GLsizei)w, (GLsizei)h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -35,6 +38,10 @@ void ReshapeWindow(int w, int h) {
 
 
 void TimerCallback(int) {
+    if (game) {
+        game->Update();
+    }
+  
     glutPostRedisplay();
     glutTimerFunc(1000 / FPS, TimerCallback, 0);
 }

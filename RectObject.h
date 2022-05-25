@@ -3,14 +3,14 @@
 class RectObject
 {
 public:
-	//RectObject(Rect initial_position): position(initial_position) {};
 	virtual void Draw() = 0;
-	Rect GetPosition() { return position; };
-	//void SetPosition();
+	virtual void HandleWindowReshape() = 0;
+	float getWidth() { return width; }
+	float getheight() { return height; }
+	Point getPosition() { return position; }
 protected:
-	Rect position;
 	float width;
 	float height;
-	Point pos;
+	Point position;
 };
 
