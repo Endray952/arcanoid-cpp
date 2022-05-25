@@ -10,6 +10,7 @@ Ball::Ball() {
 }
 
 
+
 void Ball::SetStartPosition() {
 	float w = Game::window_width;
 	float h = Game::window_height;

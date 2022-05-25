@@ -12,12 +12,14 @@ public:
 	void Draw() override;
 	void HandleWindowReshape() override;
 	void Move();
-	//void setSpeed(Point speed);
+	void setSpeedX(float speedX) { speed.x = speedX; };
+	void setSpeedY(float speedY) { speed.y = speedY; };
+	void inverseSpeedX() { speed.x = -speed.x; };
+	void inverseSpeedY() { speed.y = -speed.y; };
 	void SetStartPosition();
-	//Point getSpeed() { return speed; };
-	Point speed;
-private:
+	Point getSpeed() { return speed; };
 	
-	//bool CheckCollision(vector<Brick>& bricks, Rect& rocket_pos);
+private:
+	Point speed;
 };
 

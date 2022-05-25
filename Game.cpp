@@ -1,16 +1,33 @@
 #include "Game.h"
+#include <GL\freeglut.h>
+#include <string>
+#include <fstream>
+#include <iostream>
+#include <sstream> 
 float Game::window_width;
 float Game::window_height;
 
+using namespace std;
+
+Game::Game() {
+	LoadLevel();
+}
 
 void Game::MouseMove(int mouse_x) {
 	if (!isActive) return;
 	rocket.Move(mouse_x);
-	//Draw();
+}
+
+void Game::PauseUnpause() {
+	isActive = !isActive;
 }
 
 
 void Game::Draw() {
+	string s = to_string(balls_left - 1);
+	const char* c = s.c_str();
+	glRasterPos2f(Game::window_width - 50, Game::window_height - 50);
+	glutBitmapString(GLUT_BITMAP_HELVETICA_18, (unsigned char*)c);
 	rocket.Draw();
 	ball.Draw();
 	for (auto& brick : bricks) {
@@ -33,39 +50,58 @@ void Game::Update() {
 void Game::NewBall() {
 	ball.SetStartPosition();
 	rocket.setStartPosition();
+	balls_left--;
 	isActive = false;
 }
 
 
 void Game::LoadLevel() {
-	for (int row = 0; row < 10; row++)
+	ifstream file("level_1.txt");
+	vector<vector<int>> level;
+	string str;
+	int index = 0;
+	while (getline(file, str)) {
+		level.push_back(vector<int>());
+		stringstream ss(str);
+		std::istream_iterator<std::string> begin(ss);
+		std::istream_iterator<std::string> end;
+		std::vector<std::string> tokens(begin, end);
+		for (auto& token : tokens) {
+			level[index].push_back(stoi(token));
+		}
+		index++;
+
+	}
+	row_number = level.size();
+	float width = Game::window_width / Brick::col_number;;
+	for (int row = 0; row < row_number; row++)
 	{
-		for (int col = 0; col < 15; col++)
+		for (int col = 0; col < Brick::col_number; col++)
 		{
-			float x = Game::window_width / 30 + col * Game::window_width / 15;
-			float y = 20 / 2 + row * 20;
-			Brick br({ x, y }, 2, row, col);
+			float x = Game::window_width / (Brick::col_number * 2) + col * Game::window_width / Brick::col_number;
+			Brick br( level[row][col], row, col);
+			float h = br.getHeight();
+			float y = h / 2 + row * h;
+			br.SetPosition({ x,y });
 			bricks.push_back(br);
 		}
 	}
-	
+	balls_left = 3;
 }
 
 
 bool Game::isColision(Brick& br) {
-	//float x = b.x, y = b.y, r = b.r, c = br.col, w = br.w, row = br.row, h = br.h;
 	if (br.GetStrength() <= 0) return false;
 	float x = ball.getPosition().x;
 	float y = ball.getPosition().y;
 	float r = ball.getWidth() / 2;
 	float h = br.getHeight();
 	float w = br.getWidth();
-	float c = br.col;
-	float row = br.row;
-	if (abs(x - c * w - w / 2 - 2) <= r + w / 2 && abs(y - row * h - h / 2 - 2) <= r + h / 2)
+	float col = br.getCol();
+	float row = br.getRow();
+	if (abs(x - col * w - w / 2 - 2) <= r + w / 2 && abs(y - row * h - h / 2 - 2) <= r + h / 2)
 	{
-		if (sqrt((c * w + w / 2 - x) * (c * w + w / 2 - x) + (row * h + h / 2 - y) * (row * h + h / 2 - y))
-			- (w / 2 - 1) * sqrt(2.0) - r > r * (sqrt(2.0) - 1))
+		if (sqrt((col * w + w / 2 - x) * (col * w + w / 2 - x) + (row * h + h / 2 - y) * (row * h + h / 2 - y))- (w / 2 - 1) * sqrt(2.0) - r > r * (sqrt(2.0) - 1))
 			return false;
 		else
 			return true;
@@ -81,62 +117,68 @@ void Game::HandleCollision() {
 
 	if (ball_pos.x - r <= 0)
 	{
-		//ball_pos.x = r;
-		ball.speed.x *= -1;
+		ball.inverseSpeedX();
 	}
 	else if (ball_pos.y - r <= 0)
 	{
-		//y = r;
-		ball.speed.y *= -1;
+		ball.inverseSpeedY();
 	}
 	else if (ball_pos.x + r >= Game::window_width)
 	{
-		//x = 300 - r;
-		ball.speed.x *= -1;
+		ball.SetPosition({ Game::window_width - r,  ball.getPosition().y });
+		ball.inverseSpeedX();
 	}
 	else if (ball_pos.y + r >= rocket_pos.y && ball_pos.y + r <= rocket_pos.y + rocket.getHeight() && ball_pos.x > rocket_pos.x - rocket.getWidth()/2 && ball_pos.x < rocket_pos.x + rocket.getWidth() /2)
 	{
 		float y = rocket_pos.y - 2 * r;
 		ball_pos.y = y;
 		ball.SetPosition(ball_pos);
-		ball.speed.y *= -1;
+		ball.inverseSpeedY();
 	}
 	else if (ball_pos.y > Game::window_height) {
 		NewBall();
 	}
 
-	
-	for (int i = 0; i < 10; i++)
+	float w = bricks[0].getWidth();
+	float h = bricks[0].getHeight();
+	for (int i = 0; i < row_number; i++)
 	{
-		for (int j = 0; j < 15; j++)
+		for (int j = 0; j < Brick::col_number; j++)
 		{
-			Brick& b = bricks[i * 15 + j ];
-			float w = b.getWidth();
-			float h = b.getHeight();
-			if (isColision(b))
+			Brick& brick = bricks[i * Brick::col_number + j ];
+			
+			if (isColision(brick))
 			{
-				if (abs(ball_pos.x - b.col * w - w / 2) < abs(ball_pos.y - b.row * h - h / 2))
+				if (abs(ball_pos.x - brick.getCol() * w - w / 2) < abs(ball_pos.y - brick.getRow() * h - h / 2))
 				{
-					ball.speed.y *= -1;
+					ball.inverseSpeedY();
 				}
-				else if (abs(ball_pos.x - b.col * w - w / 2) > abs(ball_pos.y - b.row * h - h / 2))
+				else if (abs(ball_pos.x - brick.getCol() * w - w / 2) > abs(ball_pos.y - brick.getRow() * h - h / 2))
 				{
-					ball.speed.x *= -1;
+					ball.inverseSpeedX();
 				}
 				else
 				{
-					if (ball.speed.x > 0)
+					if (ball.getSpeed().x > 0)
 					{
-						if (ball_pos.x < b.col * w + 1) ball.speed.x *= -1;
+						if (ball_pos.x < brick.getCol() * w + 1) {
+							ball.inverseSpeedX();
+						}
 					}
-					else if (ball_pos.x > (b.col + 1) * w - 1) ball.speed.x *= -1;
-					if (ball.speed.y > 0)
+					else if (ball_pos.x > (brick.getCol() + 1) * w - 1) {
+						ball.inverseSpeedX();
+					} 
+					if (ball.getSpeed().y > 0)
 					{
-						if (ball_pos.y < b.row * h + 1) ball.speed.y *= -1;
+						if (ball_pos.y < brick.getRow() * h + 1) {
+							ball.inverseSpeedY();
+						} 
 					}
-					else if (ball_pos.y > (b.row + 1) * h - 1) ball.speed.y *= -1;
+					else if (ball_pos.y > (brick.getRow() + 1) * h - 1) {
+						ball.inverseSpeedY();
+					} 
 				}
-				b.Hit();
+				brick.Hit();
 				
 				return;
 			}

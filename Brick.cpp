@@ -1,13 +1,12 @@
 #include "Brick.h"
 #include <GL/glut.h>
 #include "Game.h"
-
-Brick::Brick(Point position, int strength, int row, int col) {
-	this->position = position;
+int Brick::col_number = 15;
+Brick::Brick( int strength, int row, int col) {
 	this->strength = strength;
 	this->col = col;
 	this->row = row;
-	width = Game::window_width / 15;
+	width = Game::window_width / Brick::col_number;
 	height = 20;
 }
 

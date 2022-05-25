@@ -8,7 +8,7 @@ Rocket::Rocket() {
 }
 
 void Rocket::HandleWindowReshape() {
-	width = Game::window_width / 12;
+	width = Game::window_width / 10;
 	height = Game::window_height / 70;
 	position.y = Game::window_height - height / 2;
 }

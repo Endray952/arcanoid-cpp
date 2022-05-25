@@ -88,7 +88,7 @@ void MouseCallback(int button, int state, int x, int y) {
         case GLUT_LEFT_BUTTON:
             //menu.HandleClick();
             if (game) {
-                game->isActive = !game->isActive;
+                game->PauseUnpause();
             }       
             break;
         default:
@@ -99,11 +99,7 @@ void MouseCallback(int button, int state, int x, int y) {
 
 
 void MouseRoutine(int x, int y) {
-    //menu.FindFocus(x, y);
-    //std::cout << x << " "
     game->MouseMove(x);
-    //mouse_x = x;
-    //r_x = mouse_x;
 }
 
 
