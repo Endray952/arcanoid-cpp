@@ -9,14 +9,14 @@ float Game::window_height;
 
 using namespace std;
 
-Game::Game() {
-	LoadLevel();
-}
+Game::Game(Menu& menu) : pMenu{menu} {}
+
 
 void Game::MouseMove(int mouse_x) {
 	if (!isActive) return;
 	rocket.Move(mouse_x);
 }
+
 
 void Game::PauseUnpause() {
 	isActive = !isActive;
@@ -26,6 +26,7 @@ void Game::PauseUnpause() {
 void Game::Draw() {
 	string s = to_string(balls_left - 1);
 	const char* c = s.c_str();
+	glColor3f(0.0, 0.0, 0.0);
 	glRasterPos2f(Game::window_width - 50, Game::window_height - 50);
 	glutBitmapString(GLUT_BITMAP_HELVETICA_18, (unsigned char*)c);
 	rocket.Draw();
@@ -41,11 +42,16 @@ void Game::HandleWindowReshape() {
 	ball.HandleWindowReshape();
 }
 
+
 void Game::Update() {
 	if (!isActive) return;
 	ball.Move();
 	HandleCollision();
+	if (balls_left <= 0 || bricks_left <= 0) {
+		EndGame();
+	}
 }
+
 
 void Game::NewBall() {
 	ball.SetStartPosition();
@@ -55,8 +61,8 @@ void Game::NewBall() {
 }
 
 
-void Game::LoadLevel() {
-	ifstream file("level_1.txt");
+void Game::LoadLevel(string path) {
+	ifstream file(path);
 	vector<vector<int>> level;
 	string str;
 	int index = 0;
@@ -87,10 +93,19 @@ void Game::LoadLevel() {
 		}
 	}
 	balls_left = 3;
+	bricks_left = row_number * Brick::col_number;
 }
 
 
-bool Game::isColision(Brick& br) {
+void Game::EndGame() {
+	bricks.clear();
+	pMenu.isGame = false;
+	ball.SetStartPosition();
+	rocket.setStartPosition();
+}
+
+
+bool Game::isCollision(Brick& br) {
 	if (br.GetStrength() <= 0) return false;
 	float x = ball.getPosition().x;
 	float y = ball.getPosition().y;
@@ -147,7 +162,7 @@ void Game::HandleCollision() {
 		{
 			Brick& brick = bricks[i * Brick::col_number + j ];
 			
-			if (isColision(brick))
+			if (isCollision(brick))
 			{
 				if (abs(ball_pos.x - brick.getCol() * w - w / 2) < abs(ball_pos.y - brick.getRow() * h - h / 2))
 				{
@@ -178,7 +193,9 @@ void Game::HandleCollision() {
 						ball.inverseSpeedY();
 					} 
 				}
-				brick.Hit();
+				if (brick.Hit()) {
+					bricks_left--;
+				}
 				
 				return;
 			}

@@ -1,25 +1,23 @@
 #include <GL/glut.h>
 #include <math.h>
 #include "Game.h"
-#include <iostream>
-
+#include "Menu.h"
 
 #define FPS 60
 float WinWidth = 600.0;
 float WinHeight = 600.0;
 
 
-float r_x = 50.0, r_y = 290.0, r_w = 80, r_h = 8.0;
-int mouse_x;
-
-Game *game;
+Menu menu("config.txt");
+Game* game;
 
 void Initialize(void) {
     glClearColor(1.0, 1.0, 1.0, 1.0);
     Game::window_width = glutGet(GLUT_WINDOW_WIDTH);
     Game::window_height = glutGet(GLUT_WINDOW_HEIGHT);
-    Game* g = new Game;
+    Game* g = new Game(menu);
     game = g;
+    menu.game = game;
 }
 
 void ReshapeWindow(int w, int h) {
@@ -38,7 +36,7 @@ void ReshapeWindow(int w, int h) {
 
 
 void TimerCallback(int) {
-    if (game) {
+    if (game && menu.isGame) {
         game->Update();
     }
   
@@ -57,10 +55,20 @@ void Display(void) {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    //menu.Render();
+    
+    if (menu.isGame) {
+        if (game) {
+            game->Draw();
+        }
+    }
+    else {
+        menu.Render();
+    }
+
     //glColor3f(0.2, 0.8, 0.1);
     //glRectf(r_x, r_y, r_x + r_w, r_y + r_h);
-    game->Draw();
+    //
+    //menu.Render();
     glutSwapBuffers();
 }
 
@@ -69,6 +77,9 @@ void KeyboardCallback(int key, int, int) {
     switch (key)
     {
     case GLUT_KEY_UP:
+        if (game) {
+            game->EndGame();
+        }      
         break;
     case GLUT_KEY_DOWN:
         break;
@@ -86,10 +97,16 @@ void MouseCallback(int button, int state, int x, int y) {
     if (state == GLUT_DOWN) {
         switch (button) {
         case GLUT_LEFT_BUTTON:
-            //menu.HandleClick();
-            if (game) {
-                game->PauseUnpause();
-            }       
+            if (menu.isGame) {
+                if (game) {
+                    game->PauseUnpause();
+                }
+            }
+            else {
+                menu.HandleClick();
+            }
+            
+                 
             break;
         default:
             break;
@@ -99,7 +116,14 @@ void MouseCallback(int button, int state, int x, int y) {
 
 
 void MouseRoutine(int x, int y) {
-    game->MouseMove(x);
+    if (menu.isGame) {
+        if (game) {
+            game->MouseMove(x);
+        }
+    }
+    else {
+        menu.FindFocus(x, y);
+    }
 }
 
 

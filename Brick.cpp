@@ -22,6 +22,10 @@ void Brick::Draw() {
 	glRectf(position.x - width / 2 + 1, position.y + height / 2 -1, position.x + width / 2 - 1, position.y - height / 2 + 1);
 }
 
-void Brick::Hit() {
+bool Brick::Hit() {
 	strength--;
+	if (strength <= 0) {
+		return true;
+	}
+	return false;
 }

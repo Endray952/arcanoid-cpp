@@ -1,5 +1,4 @@
 #pragma once
-
 struct Point
 {
 	float x;
@@ -7,8 +6,10 @@ struct Point
 };
 struct Rect
 {
-	Point LeftTop;
-	Point RighBottom;
+	int x0;
+	int y0;
+	int x1;
+	int y1;
 };
 enum Bonus {
 	SECOND_BALL,

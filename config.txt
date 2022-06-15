@@ -1,0 +1,14 @@
+#Menu
+	id='1'
+	#Button
+		id='1'
+		name='Level 1'
+		position='100,50,400,100'
+	#EndButton
+	#Button
+		id='2'
+		name='Level 2'
+		position='100,120,400,170'
+	#EndButton
+#EndMenu
+

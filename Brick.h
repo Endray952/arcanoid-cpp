@@ -6,9 +6,9 @@ class Brick : public RectObject
 {
 public:
 	Brick(int strength, int row, int col);
-	void HandleWindowReshape() {};
+	void HandleWindowReshape() override {};
 	void Draw() override;
-	void Hit();
+	bool Hit();
 	int getCol() { return col; };
 	int getRow() { return row; };
 	int GetStrength() { return strength; };
